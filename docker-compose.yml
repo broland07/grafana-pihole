@@ -1,0 +1,31 @@
+version: '3'
+services:
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    container_name: prometheus
+    restart: always
+    network_mode: host
+    volumes:
+      - $PWD/prometheus.yml:/etc/prometheus/prometheus.yml
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    container_name: grafana
+    restart: always
+    network_mode: host
+    depends_on:
+      - prometheus
+    volumes:
+      - $PWD/grafana.ini:/etc/grafana/grafana.ini
+  pihole-exporter:
+      image: ekofr/pihole-exporter:latest
+      ports:
+          - 9617:9617
+      environment:
+          - PIHOLE_HOSTNAME=x.xx.x.xx
+          - PIHOLE_PASSWORD=xxxx
+          - INTERVAL=30s
+          - PORT=9617
